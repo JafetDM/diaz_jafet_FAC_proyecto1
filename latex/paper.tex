@@ -7,14 +7,15 @@
 \usepackage{amsmath}    % Para ecuaciones
 \usepackage{hyperref}   % Para enlaces
 
-\title{Título de tu Paper: Un Ejemplo de Lógica Combinatoria}
+\renewcommand{\IEEEkeywordsname}{Palabras clave}
+
+\title{Lógica Combinacional: Puerta con contraseña}
 
 \author{
-    \IEEEauthorblockN{Nombre del Autor}
     \IEEEauthorblockA{Instituto Tecnológico de Costa Rica\\
     Escuela de Ingeniería en Computadores\\
-    CE1107 — Fundamentos de Arquitectura de Computadores\\
-    Correo Electrónico: ejemplo@tec.ac.cr}
+    CE1107 — Fundamentos de Arquitectura de Computadores\\}
+    \IEEEauthorblockN{\\Autores: \\ Jafet José Diaz Morales - 2023053249 \\ Esteban Campos - Carnet}
 }
 
 \begin{document}
@@ -22,18 +23,57 @@
 \maketitle
 
 \begin{abstract}
-Este abstract es un ejemplo. Un buen abstract permite a los lectores obtener la esencia de su artículo rápidamente, preparar a los lectores para seguir la información detallada y ayudar a recordar los puntos clave. Debe estar escrito en inglés y tener entre 150 y 250 palabras. Aquí se resumirá brevemente el objetivo del trabajo, la metodología utilizada y los principales resultados obtenidos.
+En este trabajo se presenta un algoritmo desarrollado principalmente con lógica combinacional, complementado con algunos elementos secuenciales así como otros componentes (sensores, LEDs, transistores, circuitos integrados, Raspberry Pi Pico W, motor CD, etc.) para implementar una puerta de acceso con contraseña. 
+
+El diseño integra un sensor digital para la captura de la contraseña de 8 bits, utilizando un registro de desplazamiento serie-paralelo para mostrarla gráficamente mediante un visualizador de LEDs. Además, emplea un circuito decodificador para descifrar la contraseña y luego con un BCD a display de siete segmentos indicar el resultado de la verificación. Además, se construyó una maqueta con un motor que ilustrara el funcionamiento del sistema, aunque el accionador del motor no alcanzó el desempeño esperado. 
+
+La metodología aplicada incluyó la construcción de los circuitos lógicos en protoboard y la verificación del correcto funcionamiento de cada entrada y salida. 
+
+Los resultados muestran que el sistema puede reconocer y mostrar correctamente la contraseña, demostrando la aplicabilidad de la lógica combinacional y secuencial en el desarrollo de sistemas de seguridad digital simples, y proporcionando una base para implementaciones más complejas en el futuro.
 \end{abstract}
 
+
 \begin{IEEEkeywords}
-Lógica combinatoria, algoritmo, resultados, conclusión, recomendación, IEEE.
+Lógica combinacional, lógica secuencial, puerta con contraseña, decodificador, circuitos integrados, sensor.
 \end{IEEEkeywords}
 
 \section{Introducción}
-La introducción debe presentar el contexto del problema o tema que se va a resolver, explicando su relevancia y antecedentes. Al final de la introducción se describe la organización del documento, por ejemplo: en la sección II se presenta el algoritmo desarrollado, en la sección III los resultados obtenidos, en la sección IV conclusiones y en la sección V recomendaciones.
+En la actualidad, los sistemas de seguridad constituyen un área de interés tanto educativo como práctico. Implementar un sistema de seguridad digital simple permite demostrar y poner en práctica los fundamentos de la lógica combinacional y secuencial, logrando fortalecer estos conceptos teóricos. 
+
+Por otro lado, los sistemas de acceso con contraseña combinan entradas digitales en serie y paralelas, circuitos de control y dispositivos de visualización para garantizar la verificación de la información de manera eficiente.
+
+Este trabajo aborda el diseño e implementación de una puerta de acceso con contraseña de 8 bits utilizando principalmente lógica combinacional, complementada con elementos secuenciales y otros componentes electrónicos, tales como sensores, LEDs, registros de desplazamiento, decodificadores, un display de siete segmentos, Raspberry Pi Pico W, entre otros. El sistema permite la captura de la contraseña mediante un sensor digital, su visualización en LEDs y la verificación mediante un display de siete segmentos.
+
+La metodología aplicada incluye la construcción de los circuitos en protoboard y la prueba del correcto funcionamiento de cada entrada y salida, así como la integración de una maqueta que simula el funcionamiento de la puerta mediante un motor. Aunque algunos elementos del accionador de la maqueta no alcanzaron el desempeño esperado, el sistema logra reconocer y mostrar correctamente la contraseña en los dispositivos de visualización, demostrando la aplicabilidad de la lógica digital en sistemas de seguridad básicos.
+
+El documento se organiza de la siguiente manera: la Sección II describe el algoritmo desarrollado, la Sección III presenta los resultados obtenidos, la Sección IV discute las conclusiones y la Sección V proporciona recomendaciones para implementaciones futuras.
 
 \section{Algoritmo Desarrollado}
-Aquí se describe detalladamente el algoritmo que se implementó para resolver el problema. Se pueden incluir diagramas de flujo, pseudocódigo o ecuaciones relevantes.  
+El algoritmo y solución en general para desarrollar el sistema se basa en la Figura \ref{fig:bloques}, que es un diagrama de bloques entregado por el profesor que muestra el flujo general del sistema de puerta con contraseña.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/Bloques.png}
+    \caption{Diagrama de bloques del sistema de puerta con contraseña}
+    \label{fig:bloques}
+\end{figure}
+
+De esta forma, se puede diseñar el circuito en base a cada uno de los submódulos. A continuación se desarrolla cada submódulo:
+
+\subsection{Circuito Combinatorio (Circuitos Integrados)}
+
+La sección más importante del algoritmo desarrollado es el circuito combinatorio. Este a su vez consiste en varias sub-etapas. 
+
+\subsection{Sensores}
+
+Para el submódulo se utilizó el sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al ponerse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
+
+Un problema enfrentado es que el sensor es muy sensible y genera mucho ruiod. Para solucionar esto se útilizó la Raspberry Pi Pico W como debouncer, de forma tal que la rasberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor.
+
+\subsection{Visualizador con LEDs}
+
+Otro submódulo requerido es el visualizador con LEDS, el cuál muestra la contraseña que ingresó. 
+
 \begin{equation}
 Y = A \cdot B + \overline{C}
 \end{equation}
@@ -58,4 +98,5 @@ Se escriben recomendaciones sobre posibles mejoras, aplicaciones futuras o preca
 \bibliography{referencias} % archivo referencias.bib con formato BibTeX
 
 \end{document}
+
 
