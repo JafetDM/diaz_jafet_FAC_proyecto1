@@ -1,0 +1,61 @@
+\documentclass[conference]{IEEEtran}  % Formato tipo IEEE para conferencias
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{cite}       % Para referencias IEEE
+\usepackage{graphicx}   % Para incluir imágenes
+\usepackage{amsmath}    % Para ecuaciones
+\usepackage{hyperref}   % Para enlaces
+
+\title{Título de tu Paper: Un Ejemplo de Lógica Combinatoria}
+
+\author{
+    \IEEEauthorblockN{Nombre del Autor}
+    \IEEEauthorblockA{Instituto Tecnológico de Costa Rica\\
+    Escuela de Ingeniería en Computadores\\
+    CE1107 — Fundamentos de Arquitectura de Computadores\\
+    Correo Electrónico: ejemplo@tec.ac.cr}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este abstract es un ejemplo. Un buen abstract permite a los lectores obtener la esencia de su artículo rápidamente, preparar a los lectores para seguir la información detallada y ayudar a recordar los puntos clave. Debe estar escrito en inglés y tener entre 150 y 250 palabras. Aquí se resumirá brevemente el objetivo del trabajo, la metodología utilizada y los principales resultados obtenidos.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Lógica combinatoria, algoritmo, resultados, conclusión, recomendación, IEEE.
+\end{IEEEkeywords}
+
+\section{Introducción}
+La introducción debe presentar el contexto del problema o tema que se va a resolver, explicando su relevancia y antecedentes. Al final de la introducción se describe la organización del documento, por ejemplo: en la sección II se presenta el algoritmo desarrollado, en la sección III los resultados obtenidos, en la sección IV conclusiones y en la sección V recomendaciones.
+
+\section{Algoritmo Desarrollado}
+Aquí se describe detalladamente el algoritmo que se implementó para resolver el problema. Se pueden incluir diagramas de flujo, pseudocódigo o ecuaciones relevantes.  
+\begin{equation}
+Y = A \cdot B + \overline{C}
+\end{equation}
+
+\section{Resultados}
+En esta sección se presentan los resultados obtenidos tras la implementación del algoritmo, con tablas, gráficas o comparaciones según sea necesario.  
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/74LS157.png}
+    \caption{Ejemplo de resultado gráfico.}
+    \label{fig:resultados}
+\end{figure}
+
+\section{Conclusiones}
+Las conclusiones se redactan en prosa, indicando los hallazgos más importantes, la efectividad del algoritmo y su aplicabilidad.
+
+\section{Recomendaciones}
+Se escriben recomendaciones sobre posibles mejoras, aplicaciones futuras o precauciones a tener en cuenta.
+
+\section*{Bibliografía}
+\bibliographystyle{IEEEtran}
+\bibliography{referencias} % archivo referencias.bib con formato BibTeX
+
+\end{document}
+
