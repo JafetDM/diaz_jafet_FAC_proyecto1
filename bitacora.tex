@@ -1,0 +1,223 @@
+% Bitacora_Proyecto.tex
+% Plantilla LaTeX para la bitácora de un proyecto (Conocimiento de Ingeniería) — 10%
+% Instrucciones: compilar con pdflatex o latexmk. Mantener el archivo en un repositorio git y hacer commits frecuentes.
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{datetime}
+\usepackage{xcolor}
+\geometry{margin=2.5cm}
+
+% Cabecera y pie
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Bitácora — Conocimiento de Ingeniería}
+\rhead{\textbf{Proyecto:} Nombre del Proyecto}
+\cfoot{Página \thepage}
+
+% Comandos útiles
+\newcommand{\entry}[4]{%
+  \subsection*{#1}
+  \textbf{Fecha:} #2 \\
+  \textbf{Participantes:} #3 \\
+  \textbf{Objetivos del día:} \\
+  #4 \\
+  \vspace{6pt}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  {\scshape\LARGE Universidad / Instituto \par}
+  \vspace{1cm}
+  {\huge\bfseries Bitácora de Proyecto: Nombre del Proyecto \par}
+  \vspace{1.5cm}
+  {\Large \textit{Atributo evaluado:} Conocimiento de Ingeniería (10\%) \par}
+  \vfill
+  {\large Autor: Nombre del Estudiante \par}
+  {\large Curso: Nombre del Curso \par}
+  {\large Profesor: Nombre del Profesor \par}
+  \vspace{1cm}
+  {\large Fecha de inicio: \today \par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Instrucciones de uso}
+Esta bitácora debe actualizarse periódicamente. Cada entrada debe corresponder a una fecha (o rango de fechas) e incluir:
+\begin{itemize}
+  \item Actividades realizadas y procedimientos implementados (paso a paso).
+  \item Tablas de datos experimentales o de diseño.
+  \item Ecuaciones booleanas, mapas de Karnaugh y simplificaciones (si aplica).
+  \item Herramientas de automatización y software utilizados (versiones y comandos relevantes).
+  \item Enlaces a commits relevantes en el repositorio git (hash corto y mensaje).
+\end{itemize}
+
+\section{Resumen ejecutivo}
+Breve resumen del progreso del proyecto, hitos y estado actual.
+
+\section{Registro diario / por sesión}
+% --- Ejemplo de entrada ---
+\subsection*{Plantilla de entrada}
+\noindent\textbf{Fecha:} \underline{YYYY-MM-DD}\\
+\textbf{Participantes:} \underline{Nombre(s)}\\
+\textbf{Objetivos del día:} \\ 
+\textbf{Procedimiento y pasos realizados:} \\ 
+\begin{enumerate}
+  \item Paso 1: descripción detallada. Incluir comandos, parámetros y valores medidos.
+  \item Paso 2: ...
+\end{enumerate}
+\textbf{Resultados (tablas, gráficas):} \\ 
+\textbf{Ecuaciones y simplificaciones (si aplica):} 
+\begin{verbatim}
+  -- Aquí incluir ecuaciones booleanas o algebraicas
+\end{verbatim}
+\textbf{Problemas encontrados y cómo se resolvieron:} \\ 
+\textbf{Tareas para la próxima sesión:} \\ 
+\vspace{0.5cm}
+
+% --- Entrada de ejemplo rellena ---
+\subsection*{Ejemplo: Semana 1 - Diseño inicial}
+\textbf{Fecha:} 2025-09-01\\
+\textbf{Participantes:} Jafet Díaz Morales\\
+\textbf{Objetivos del día:} Definir requerimientos, seleccionar microcontrolador y elaborar diagrama inicial.
+
+\textbf{Procedimiento y pasos realizados:}
+\begin{enumerate}
+  \item Revisión de requisitos del curso y alcance del proyecto.
+  \item Selección de Raspberry Pi Pico W por disponibilidad y conectividad Wi-Fi.
+  \item Diseño preliminar del circuito en esquemático (ver Figura~\ref{fig:esquematico}).
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  % \includegraphics[width=0.7\textwidth]{esquematico.png} % descomentar y agregar archivo
+  \caption{Esquemático preliminar (añadir archivo si aplica).}
+  \label{fig:esquematico}
+\end{figure}
+
+\textbf{Resultados (tabla de componentes):}
+\begin{center}
+\begin{tabular}{@{}llr@{}}
+\toprule
+Referencia & Componente & Cantidad \\
+\midrule
+R1 & Resistor 10k & 2 \\
+C1 & Condensador 10uF & 1 \\
+U1 & Raspberry Pi Pico W & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Ecuaciones booleanas y simplificación:}
+\begin{align*}
+  F(A,B,C) &= A B + \overline{A} C \\ 
+  \text{Mapa de Karnaugh: simplificar a } F &= B A + \overline{A}C \quad(\text{ejemplo}).
+\end{align*}
+
+\textbf{Problemas encontrados y soluciones:} Lecturas del sensor ruidosas; se añadió un filtro RC (R=10k, C=100nF) y se promediaron lecturas.
+
+\textbf{Commits relevantes:}
+\begin{itemize}
+  \item \texttt{e3a1b2c} - "Inicial: plantilla del proyecto y esquemático".
+  \item \texttt{f4d5e6a} - "Agregar tabla de componentes y ejemplo de bitácora".
+\end{itemize}
+
+\newpage
+\section{Tablas de datos}
+Incluya aquí tablas largas usando \texttt{longtable} cuando sea necesario.
+
+\begin{longtable}{@{}lll@{}}
+\caption{Registro de mediciones (ejemplo)}\\
+\toprule
+Fecha & Parámetro & Valor \\
+\midrule
+\endfirsthead
+\toprule
+Fecha & Parámetro & Valor \\
+\midrule
+\endhead
+2025-09-01 & Voltaje VCC & 3.3 V \\
+2025-09-02 & Corriente pico & 120 mA \\
+\bottomrule
+\end{longtable}
+
+\section{Ecuaciones y diseño lógico}
+Usar secciones separadas para presentar la lógica booleana, tablas de verdad, mapas de Karnaugh y la simplificación final.
+
+\subsection*{Tabla de verdad (ejemplo)}
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+A & B & C & F \\
+\midrule
+0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 \\
+1 & 0 & 1 & 0 \\
+1 & 1 & 0 & 1 \\
+1 & 1 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Herramientas y automatización}
+Describa aquí las herramientas (hardware y software) y los comandos de automatización empleados. Incluya versiones y fragmentos de comandos.
+
+\subsection*{Ejemplo de herramientas}
+\begin{itemize}
+  \item Sistema operativo: Ubuntu 22.04 (o macOS 14)
+  \item IDE: Visual Studio Code v1.xx
+  \item Lenguaje / Framework: MicroPython / C++ (indicar versiones)
+  \item Herramientas de automatización: Make, CMake, scripts bash, GitHub Actions (añadir workflows si aplica).
+\end{itemize}
+
+\subsection*{Comandos útiles (ejemplo)}
+\begin{lstlisting}
+# Inicializar repositorio
+git init
+git add Bitacora_Proyecto.tex
+git commit -m "Bitácora: plantilla inicial"
+# Subir a remoto (ejemplo GitHub)
+git remote add origin git@github.com:usuario/repositorio.git
+git push -u origin main
+
+# Compilar PDF
+pdflatex Bitacora_Proyecto.tex
+# O con latexmk
+latexmk -pdf Bitacora_Proyecto.tex
+\end{lstlisting}
+
+\section{Historial de commits (muestra)}
+Aquí debe pegarse el historial de commits relevante (hash, fecha y mensaje). Ejemplo:
+\begin{verbatim}
+commit e3a1b2c 2025-09-01 "Inicial: plantilla del proyecto y esquemático"
+commit f4d5e6a 2025-09-02 "Agregar tabla de componentes y ejemplo de bitácora"
+\end{verbatim}
+
+\section{Anexos}
+Incluya diagramas, fotografías del montaje, esquemáticos y cualquier otro material complementario. Añadir referencias a archivos en el repositorio (ruta relativa).
+
+\bigskip
+\noindent\textbf{Notas finales:}
+\begin{itemize}
+  \item Mantenga commits regulares: al menos 1 commit por sesión de trabajo (se penalizarán pocas confirmaciones).
+  \item Use mensajes de commit claros y vinculantes con la entrada de la bitácora (ej.: "Bitácora: pruebas sensor DHT11 — 2025-09-03").
+  \item Entregue el PDF generado y el enlace al repositorio con todo el historial.
+\end{itemize}
+
+\end{document}
