@@ -60,24 +60,32 @@ El algoritmo y solución en general para desarrollar el sistema se basa en la Fi
 
 De esta forma, se puede diseñar el circuito en base a cada uno de los submódulos. A continuación se desarrolla cada submódulo:
 
+\subsection{Sensores}
+
+Para este submódulo se utilizó el sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al ponerse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
+
+Un problema enfrentado es que el sensor es muy sensible y genera mucho ruiod. Para solucionar esto se útilizó la Raspberry Pi Pico W como debouncer, de forma tal que la rasberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor. La conexión de este sensor con la raspberry se muestra en la figura \ref{fig:diagrama1}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/74LS157.png}
+    \caption{Diagrama de la conexión sensor-raspberry-registro de desplazamiento-buffer-salida (al decodificador).}
+    \label{fig:diagrama1}
+\end{figure}
+
+\subsection{Visualizador con LEDs}
+
+Otro submódulo requerido es el visualizador con LEDS, el cuál muestra la contraseña que se ingresó. Como la contraseña a mostrar es de 8 bits, se decidió mostrar la contraseña de forma paralela (con 8 LEDS) y serial (con un LED). La contraseña serial viene del la señal que captura el sensor (usando la raspberry para debounce). Por otro lado, la contraseña en paralelo si requiere de el registro de desplazamiento serie-paralelo (el cual forma parte del circuito combinatorio desarrollado a más detalle en la siguiente etapa). A grandes rasgos, la raspberry manda la señal serial del sensor, una señal de pulso de reloj y una señal de strobe/latch que sirve para guardar y mostrar los datos) al registro de desplazamiento CD4094. 
+
+Así, el registro realiza la conversión de 8 bits seriales a 8 bits en paralelo (
+
 \subsection{Circuito Combinatorio (Circuitos Integrados)}
 
 La sección más importante del algoritmo desarrollado es el circuito combinatorio. Este a su vez consiste en varias sub-etapas. 
 
-\subsection{Sensores}
-
-Para el submódulo se utilizó el sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al ponerse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
-
-Un problema enfrentado es que el sensor es muy sensible y genera mucho ruiod. Para solucionar esto se útilizó la Raspberry Pi Pico W como debouncer, de forma tal que la rasberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor.
-
-\subsection{Visualizador con LEDs}
-
-Otro submódulo requerido es el visualizador con LEDS, el cuál muestra la contraseña que ingresó. 
-
 \begin{equation}
 Y = A \cdot B + \overline{C}
 \end{equation}
-
 \section{Resultados}
 En esta sección se presentan los resultados obtenidos tras la implementación del algoritmo, con tablas, gráficas o comparaciones según sea necesario.  
 \begin{figure}[h]
@@ -98,5 +106,8 @@ Se escriben recomendaciones sobre posibles mejoras, aplicaciones futuras o preca
 \bibliography{referencias} % archivo referencias.bib con formato BibTeX
 
 \end{document}
+
+
+
 
 
