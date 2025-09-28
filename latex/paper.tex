@@ -27,7 +27,7 @@ En este trabajo se presenta un algoritmo desarrollado principalmente con lógica
 
 El diseño integra un sensor digital para la captura de la contraseña de 8 bits, utilizando un registro de desplazamiento serie-paralelo para mostrarla gráficamente mediante un visualizador de LEDs. Además, emplea un circuito decodificador para descifrar la contraseña y luego con un BCD a display de siete segmentos indicar el resultado de la verificación. Además, se construyó una maqueta con un motor que ilustrara el funcionamiento del sistema, aunque el accionador del motor no alcanzó el desempeño esperado. 
 
-La metodología aplicada incluyó la construcción de los circuitos lógicos en protoboard y la verificación del correcto funcionamiento de cada entrada y salida. 
+La metodología aplicada incluyó la construcción de los circuitos lógicos en protoboard (principalmente con compuertas TTL) y la verificación del correcto funcionamiento de cada entrada y salida. 
 
 Los resultados muestran que el sistema puede reconocer y mostrar correctamente la contraseña, demostrando la aplicabilidad de la lógica combinacional y secuencial en el desarrollo de sistemas de seguridad digital simples, y proporcionando una base para implementaciones más complejas en el futuro.
 \end{abstract}
@@ -44,7 +44,7 @@ Por otro lado, los sistemas de acceso con contraseña combinan entradas digitale
 
 Este trabajo aborda el diseño e implementación de una puerta de acceso con contraseña de 8 bits utilizando principalmente lógica combinacional, complementada con elementos secuenciales y otros componentes electrónicos, tales como sensores, LEDs, registros de desplazamiento, decodificadores, un display de siete segmentos, Raspberry Pi Pico W, entre otros. El sistema permite la captura de la contraseña mediante un sensor digital, su visualización en LEDs y la verificación mediante un display de siete segmentos.
 
-La metodología aplicada incluye la construcción de los circuitos en protoboard y la prueba del correcto funcionamiento de cada entrada y salida, así como la integración de una maqueta que simula el funcionamiento de la puerta mediante un motor. Aunque algunos elementos del accionador de la maqueta no alcanzaron el desempeño esperado, el sistema logra reconocer y mostrar correctamente la contraseña en los dispositivos de visualización, demostrando la aplicabilidad de la lógica digital en sistemas de seguridad básicos.
+La metodología aplicada incluye la construcción de los circuitos en protoboard (utilizando principalmente compuertas TTL) y la prueba del correcto funcionamiento de cada entrada y salida, así como la integración de una maqueta que simula el funcionamiento de la puerta mediante un motor. Aunque algunos elementos del accionador de la maqueta no alcanzaron el desempeño esperado, el sistema logra reconocer y mostrar correctamente la contraseña en los dispositivos de visualización, demostrando la aplicabilidad de la lógica digital en sistemas de seguridad básicos.
 
 El documento se organiza de la siguiente manera: la Sección II describe el algoritmo desarrollado, la Sección III presenta los resultados obtenidos, la Sección IV discute las conclusiones y la Sección V proporciona recomendaciones para implementaciones futuras.
 
@@ -62,9 +62,9 @@ De esta forma, se puede diseñar el circuito en base a cada uno de los submódul
 
 \subsection{Sensores}
 
-Para este submódulo se utilizó el sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al ponerse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
+Para este submódulo se utilizó el sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al configurarse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
 
-Un problema enfrentado es que el sensor es muy sensible y genera mucho ruiod. Para solucionar esto se útilizó la Raspberry Pi Pico W como debouncer, de forma tal que la rasberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor. La conexión de este sensor con la raspberry se muestra en la figura \ref{fig:diagrama1}
+Un problema enfrentado es que el sensor es muy sensible y genera mucho ruido. Para solucionar esto se utilizó la Raspberry Pi Pico W como debouncer, de forma tal que la raspberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor. La conexión de este sensor con la raspberry se muestra en la figura \ref{fig:diagrama1}
 
 \begin{figure}[h]
     \centering
@@ -77,15 +77,46 @@ Un problema enfrentado es que el sensor es muy sensible y genera mucho ruiod. Pa
 
 Otro submódulo requerido es el visualizador con LEDS, el cuál muestra la contraseña que se ingresó. Como la contraseña a mostrar es de 8 bits, se decidió mostrar la contraseña de forma paralela (con 8 LEDS) y serial (con un LED). La contraseña serial viene del la señal que captura el sensor (usando la raspberry para debounce). Por otro lado, la contraseña en paralelo si requiere de el registro de desplazamiento serie-paralelo (el cual forma parte del circuito combinatorio desarrollado a más detalle en la siguiente etapa). A grandes rasgos, la raspberry manda la señal serial del sensor, una señal de pulso de reloj y una señal de strobe/latch que sirve para guardar y mostrar los datos) al registro de desplazamiento CD4094. 
 
-Así, el registro realiza la conversión de 8 bits seriales a 8 bits en paralelo (
+Así, el registro realiza la conversión de 8 bits seriales a 8 bits en paralelo que son mostrados cada uno con un LED. De esta forma, el visualizador es meramente una forma de ver el proceso que realiza el registro de desplazamiento y por esa razón el visualizador con LEDs viene después del registro. Esta conexión puede verse en la figura \ref{fig:diagrama1}
+
+\subsubsection{Registro de desplazamiento serie-paralelo}
+
+Para realizar este proceso de pasar 8 bits en serie a paralelo se utilizó un registro de desplazamiento. Este registro es crucial para que los datos seriales del sensor puedan ser mostrados por el visualizador con LEDs y procesados por el circuito combinatorio. El registro utilizado fue el CD4094 el cuál es CMOS. Idealmente se hubiera deseado un TTL para mantener todo el circuito en TTL y utilizar 5V para todo, sin embargo, se eligió el CMOS por dos razones. 
+
+\begin{enumerate}
+    \item Los pines de la raspberry soportan 3.3 V. Al utilizar la raspberry como debouncer del sensor se tiene que utilizar 3.3 V para el sensor, de forma tal que su salida digital es también de 3.3 V. Por lo tanto, los 8 bits seriales son de 3.3 V
+    \item No se consiguió comprar un registro de desplazamiento serie-paralelo que fuera TTL y que tuviera un latch (para poder guardar y fijar los datos)
+\end{enumerate}
+
+El diseño del circuito requiere que el registro mantenga por algún tiempo la contraseña de 8 bits que viene del sensor, por lo que un registro sin latch no sería útil, debido a que los datos se perderían y serían difíciles de registrar. Además, para usar la raspberry, es conveniente que sea a 3.3 V. Por lo tanto, se decidió utilizar esta compuerta.
+
+Debido a esto, la salida en paralelo es inicialmente a 3.3 V. Esta salida es generalmente aceptable para la entrada de una compuerta TTL. Por ejemplo, en las 74LSxx suele ser:
+
+\[
+V_{IH} \geq 2.0 \,\text{V} \quad \Rightarrow \quad \text{``1 lógico''}
+\]
+
+\[
+V_{IL} \leq 0.8 \,\text{V} \quad \Rightarrow \quad \text{``0 lógico''}
+\]
+
+Ahora bien, a pesar de que así serviría el circuito (por ser CMOS a TTL, si fuera al revés habrían problemas) para evitar errores en la lógica se utiliza un buffer 74LS241 con el fin de estabilizar la señal. El buffer al ser TTL va a recibir la señal del CMOS y va a estabilizarla a 5V, que es la norma en TTL. Esta conexión además requiere de resistencias $pull-down$ en las TTL de forma que si no se llega al VIH la salida sea establecida en 0 lógico. 
 
 \subsection{Circuito Combinatorio (Circuitos Integrados)}
 
-La sección más importante del algoritmo desarrollado es el circuito combinatorio. Este a su vez consiste en varias sub-etapas. 
+La sección más importante del algoritmo desarrollado es el circuito combinatorio. Este a su vez consiste en varias sub-etapas necesarias para comprobar la contraseña. Esto se realiza utilizando dos decodificadores, uno para el estado de abierto y otro para el de cerrado. De esta forma, si la contraseña se cumple para uno de los casos, el decodificador mostrará un 1 lógico a su salida. Si ninguno de los dos casos se cumple, se muestra un 0 lógico. Ambos decodificadores se hicieron con compuertas TTL que realizan la operación lógica AND. 
+
+\subsubsection{Decodificador 8 Bits a 1 Bit para abierto}
+
+Las 
+
+\subsubsection{Decodificador 8 Bits a 1 Bit para cerrado}
+
 
 \begin{equation}
 Y = A \cdot B + \overline{C}
 \end{equation}
+
 \section{Resultados}
 En esta sección se presentan los resultados obtenidos tras la implementación del algoritmo, con tablas, gráficas o comparaciones según sea necesario.  
 \begin{figure}[h]
@@ -106,8 +137,3 @@ Se escriben recomendaciones sobre posibles mejoras, aplicaciones futuras o preca
 \bibliography{referencias} % archivo referencias.bib con formato BibTeX
 
 \end{document}
-
-
-
-
-
