@@ -6,6 +6,7 @@
 \usepackage{graphicx}   % Para incluir imágenes
 \usepackage{amsmath}    % Para ecuaciones
 \usepackage{hyperref}   % Para enlaces
+\usepackage{booktabs}
 
 \renewcommand{\IEEEkeywordsname}{Palabras clave}
 
@@ -64,24 +65,17 @@ De esta forma, se puede diseñar el circuito en base a cada uno de los submódul
 
 Para este submódulo se utilizó el sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al configurarse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
 
-Un problema enfrentado es que el sensor es muy sensible y genera mucho ruido. Para solucionar esto se utilizó la Raspberry Pi Pico W como debouncer, de forma tal que la raspberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor. La conexión de este sensor con la raspberry se muestra en la figura \ref{fig:diagrama1}
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.45\textwidth]{images/74LS157.png}
-    \caption{Diagrama de la conexión sensor-raspberry-registro de desplazamiento-buffer-salida (al decodificador).}
-    \label{fig:diagrama1}
-\end{figure}
+Un problema enfrentado es que el sensor es muy sensible y genera mucho ruido. Para solucionar esto se utilizó la Raspberry Pi Pico W como debouncer, de forma tal que la raspberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor. La conexión de este sensor con la raspberry se muestra en la figura \ref{fig:esq} donde se ve el esquemático general (Nota: algunos pines GP de la raspberry pi pico podrían no ser los mismos usados por como se acomodaron luego el resto de las conexiones, pero el principio es el mismo, son pines de salida).
 
 \subsection{Visualizador con LEDs}
 
 Otro submódulo requerido es el visualizador con LEDS, el cuál muestra la contraseña que se ingresó. Como la contraseña a mostrar es de 8 bits, se decidió mostrar la contraseña de forma paralela (con 8 LEDS) y serial (con un LED). La contraseña serial viene del la señal que captura el sensor (usando la raspberry para debounce). Por otro lado, la contraseña en paralelo si requiere de el registro de desplazamiento serie-paralelo (el cual forma parte del circuito combinatorio desarrollado a más detalle en la siguiente etapa). A grandes rasgos, la raspberry manda la señal serial del sensor, una señal de pulso de reloj y una señal de strobe/latch que sirve para guardar y mostrar los datos) al registro de desplazamiento CD4094. 
 
-Así, el registro realiza la conversión de 8 bits seriales a 8 bits en paralelo que son mostrados cada uno con un LED. De esta forma, el visualizador es meramente una forma de ver el proceso que realiza el registro de desplazamiento y por esa razón el visualizador con LEDs viene después del registro. Esta conexión puede verse en la figura \ref{fig:diagrama1}
+Así, el registro realiza la conversión de 8 bits seriales a 8 bits en paralelo que son mostrados cada uno con un LED. De esta forma, el visualizador es meramente una forma de ver el proceso que realiza el registro de desplazamiento y por esa razón el visualizador con LEDs viene después del registro. Esta conexión puede verse en la figura \ref{fig:esq}
 
 \subsubsection{Registro de desplazamiento serie-paralelo}
 
-Para realizar este proceso de pasar 8 bits en serie a paralelo se utilizó un registro de desplazamiento. Este registro es crucial para que los datos seriales del sensor puedan ser mostrados por el visualizador con LEDs y procesados por el circuito combinatorio. El registro utilizado fue el CD4094 el cuál es CMOS. Idealmente se hubiera deseado un TTL para mantener todo el circuito en TTL y utilizar 5V para todo, sin embargo, se eligió el CMOS por dos razones. 
+Para realizar este proceso de pasar 8 bits en serie a paralelo se utilizó un registro de desplazamiento (similar a lo hecho por \cite{micropython2025registro}). Este registro es crucial para que los datos seriales del sensor puedan ser mostrados por el visualizador con LEDs y procesados por el circuito combinatorio. El registro utilizado fue el CD4094 el cuál es CMOS. Idealmente se hubiera deseado un TTL para mantener todo el circuito en TTL y utilizar 5V para todo, sin embargo, se eligió el CMOS por dos razones. 
 
 \begin{enumerate}
     \item Los pines de la raspberry soportan 3.3 V. Al utilizar la raspberry como debouncer del sensor se tiene que utilizar 3.3 V para el sensor, de forma tal que su salida digital es también de 3.3 V. Por lo tanto, los 8 bits seriales son de 3.3 V
@@ -95,7 +89,6 @@ Debido a esto, la salida en paralelo es inicialmente a 3.3 V. Esta salida es gen
 \[
 V_{IH} \geq 2.0 \,\text{V} \quad \Rightarrow \quad \text{``1 lógico''}
 \]
-
 \[
 V_{IL} \leq 0.8 \,\text{V} \quad \Rightarrow \quad \text{``0 lógico''}
 \]
@@ -106,34 +99,203 @@ Ahora bien, a pesar de que así serviría el circuito (por ser CMOS a TTL, si fu
 
 La sección más importante del algoritmo desarrollado es el circuito combinatorio. Este a su vez consiste en varias sub-etapas necesarias para comprobar la contraseña. Esto se realiza utilizando dos decodificadores, uno para el estado de abierto y otro para el de cerrado. De esta forma, si la contraseña se cumple para uno de los casos, el decodificador mostrará un 1 lógico a su salida. Si ninguno de los dos casos se cumple, se muestra un 0 lógico. Ambos decodificadores se hicieron con compuertas TTL que realizan la operación lógica AND. 
 
-\subsubsection{Decodificador 8 Bits a 1 Bit para abierto}
+Este comportamiento se puede visualizar con la siguiente tabla de verdad. Note que solo hay una combinación que resulta en un 1 lógico para S1 y a su vez, solo hay una combinación (diferente a a de S1) para S2.
 
-Las 
+\begin{table}[h!]
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{cccccccc|cc} % <-- la barra | separa entradas y salidas
+\toprule
+\textbf{$A$} & \textbf{$B$} & \textbf{$C$} & \textbf{$D$} & 
+\textbf{$E$} & \textbf{$F$} & \textbf{$G$} & \textbf{$H$} & 
+\textbf{$S_1$} & \textbf{$S_2$} \\
+\midrule
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 
-\subsubsection{Decodificador 8 Bits a 1 Bit para cerrado}
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
 
+1 & 1 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 0 \\
+
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+
+1 & 1 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 1 \\
+
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+
+1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Tabla de Verdad para decodificador de 8 bits a 2 salidas de 1 bit}
+\label{tab:8in2out}
+\end{table}
+
+\subsubsection{Decodificador 8 Bits a 1 Bit para abierto (S1)}
+
+Para realizar este decodificador, se toma el mintérmino para S1, así como se ve en la ecuación (1) :
 
 \begin{equation}
-Y = A \cdot B + \overline{C}
+S_1 = AB\overline{CDE}FG\overline{H}
 \end{equation}
 
-\section{Resultados}
-En esta sección se presentan los resultados obtenidos tras la implementación del algoritmo, con tablas, gráficas o comparaciones según sea necesario.  
+Note que al ser un solo mintérmino, la ecuación correspondiente a S1 está conformado por productos únicamente, las cuales se pueden representar como compuertas AND, tal y como se ve en la figura \ref{fig:s1}:
+
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.45\textwidth]{images/74LS157.png}
-    \caption{Ejemplo de resultado gráfico.}
-    \label{fig:resultados}
+    \includegraphics[width=0.2\textwidth]{images/Abrir.png}
+    \caption{Esquemático para decodificador de S1.}
+    \label{fig:s1}
+\end{figure}
+
+Note que se utilizaron 4 compuertas AND de 3 entradas, esto debido a que se disponía de esas compuertas y porque permite "reutilizar" compuertas (la 1 y la 2, específicamente). 
+
+\subsubsection{Decodificador 8 Bits a 1 Bit para cerrado (S2) } 
+
+Para realizar este decodificador, se toma el mintérmino para S2, así como se ve en la ecuación (2) :
+
+\begin{equation}
+S_2 = AB\overline{C}DEFG\overline{H}
+\end{equation}
+
+Note que al ser un solo mintérmino, la ecuación correspondiente a S2 está conformado por productos únicamente, las cuales se pueden representar como compuertas AND, tal y como se ve en la figura \ref{fig:s2}:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.2\textwidth]{images/cerrar.png}
+    \caption{Esquemático para decodificador de S2.}
+    \label{fig:s2}
+\end{figure}
+
+Note que también se utilizan 4 compuertas AND de 3 entradas, esto debido a que se disponía de esas compuertas. Sin embargo, note que las compuertas 1 y 2 son las mismas (1 tiene como entrada A,B y -C; 2 tiene como entradas G y -H), por lo tanto, se pueden reutilizar esas compuertas compuertas simplemente poniendo un cable exctra en la salida de las AND 1 y 2. 
+
+Así, para realizar los dos decodificadores se utilizan 6 compuertas AND de 3 entradas, además de 4 compuertas NOT para las entradas que deben ir negadas.
+
+\subsection{BCD a display de 7 segmentos utilizando un multiplexor}
+
+Del circuito combinatorio se tienen dos bits S1 y S2 que representan dos posibles estados: abierto y cerrado, ambos indicados mediante un bit alto (1). La diferenciación entre estos dos estados puede hacerse de muchas maneras.
+
+La seleccionada fue utilizando un multiplexor. El mux es un circuito combinatorio que escoge entre dos opciones dependiendo de la entrada selectora. El mux utilizado fue el SN74LS157 \cite{Sandorobotics_74LS157} , el cuál tiene un pinout como se muestra a continuación en la figura \ref{fig:74LS157}.
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.25\textwidth]{images/74LS157.png} % Ajusta al 50% del ancho del texto
+    \caption{Pinout del multiplexor SN74LS157 \cite{Sandorobotics_74LS157}}
+    \label{fig:74LS157}
+\end{figure}
+
+
+Note que el Mux tiene la capacidad de seleccionar justamente entre 2 entradas (A o B) según el bit selector SEL. Note además que se tiene un bit STR el cuál corresponde a la activación en bajo (o sea, si STR es 0, el Mux funciona normalmente, si STR es 1, el Mux muestra un 0 lógico en todas sus salidas de datos).
+
+Este diseño de mux es muy útil debido a que nos deja elegir entre dos opciones de 4 bits ($A_1,A_2,A_3,A_4$, lo mismo con B) pero además nos permite forzar una salida de $0000$ si se pone STR en alto.
+
+Tomando esto en cuenta, se pueden enviar 3 posibles combinaciones de 4 bits solamente con 2 bits. Esto es conveniente porque el BCD necesita únicamente 4 bits para manejar el display de siete segmentos, por lo que con el mux es posible poner 3 distintos números. 
+
+Ahora bien, es necesario poner letras, no números. Esto se logra intercambiando los pines de conexión del display de siete segmentos \cite{XLITX_5621BS} siguiendo el pinout \ref{fig:7seg} de forma que una combinación que normalmente pondría un número ponga una letra (por ejemplo, si se intercambian los pines de G y D, es posible lograr que un 0000 (que normalmente muestra un 0 en el display) muestra una A, o si se cambia A y C, un 6 muestra una E).
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.25\textwidth]{images/display.png} % Ajusta al 50% del ancho del texto
+    \caption{Pinout del display 7 segmentos \cite{XLITX_5621BS}}
+    \label{fig:7seg}
+\end{figure}
+
+Así, para mostrar 3 distintas letras se utiliza en el BCD:
+
+\begin{itemize}
+    \item $ A = 0000 $ (lo que sería un 0 normalmente)
+    \item $ C = 1110 $ (lo que sería un 14 normalmente)
+    \item $ E = 0110 $ (lo que sería un 6 normalmente)
+\end{itemize}
+
+Para combinaciones como la C fue necesario revisar el pinout y datasheet del BCD e identificar que combinación servía. Note en el datasheet \cite{TI_SN74LS47} que $1110$ activa la cantidad de LEDS necesarios, el resto es solo reacomodar los pines. 
+
+De esta forma, teniendo las combinaciones que generan las letras deseadas, se puede usar el mux para mostrarlas.
+
+\begin{itemize}
+    \item Para mostrar A, se usa $S_1$ en STR, pues si en algún momento la clave de abierto se activa, mandará un 1, forzando un $0000$ en el mux y a su vez, mostrando la A.
+
+    \item Para mostrar E y C, se usa $S_2$ en SEL, pues si en algún momento la clave de cerrado se activa, mandará un 1 lo que activará la segunda opción (4 bits fijos de antemano) y si no se pone la clave, se mantendrá un 0, poniendo la primera opción (4 bits fijos de antemano para poner la E).
+    
+\end{itemize}
+
+Note que no hay conflictos, pues A y C no pueden existir a la vez (según la tabla de verdad). El único estado que falta por mostrar con display de 7 segmentos es el de lectura. Esto se realizó conectando el bit de latch (que viene de la raspberry pi pico w) al pin 2 (que corresponde al DP (el punto/dot) del display), de forma tal que cuando se está leyendo la contraseña, el punto se encienda. Esta conexión puede verse en el esquemático general mostrado más adelante en la figura \ref{fig:esq}. Note que el mux tiene entradas predefinidas A1...A4 y B1...B4, pues ya se sabe los bits correspondientes a las letras a mostrar.
+
+\subsection{Circuito desacoplador y accionador}
+
+El circuito desacoplador consiste en un puente H hecho con transistores 2N222 siguiendo el ejemplo de \cite{makordoba2025circuitoH}. El accionador consiste en un motor a la salida del puente H que mueve una puerta que sirve de maqueta. 
+
+El puente H tiene 2 entradas que cambian la dirección del motor. Así, las entradas se conectan a S1 y S2, causando que si S1 = 1, el motor gira en una dirección y si S2 = 1, el motor gira en la dirección contraria. Observe en la tabla de verdad \ref{tab:8in2out} que S1 y S2 no pueden ser 1 a la vez, evitando así cualquier problema con el puente H.
+
+De esta forma, el circuito para la puerta con contraseña está completo. A continuación se muestra un esquemático general del circuito \ref{fig:esq}. La parte superior representa el sensor, registro de desplazamiento, y visualizador LEDS. La parte de en medio es el circuito combinatorio con el decodificador, donde sus salidas S1 y S2 activan el puente H y el mux (que a su vez activa el BCD a display 7 segmentos)
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.35\textwidth]{images/esq.png} % Ajusta al 50% del ancho del texto
+    \caption{Esquemático general del circuito completo: Sensor - Registro serie a paralelo - Visualizador LEDs - Circuito Combinatorio - BCD a 7 segmentos - Desacople y Accionador}
+    \label{fig:esq}
+\end{figure}
+
+\section{Resultados}
+
+En esta sección se presentan los resultados obtenidos tras la implementación del algoritmo realizado (puede verse el esquemático \ref{fig:esq}). Es importante aclarar que el circuito funcionó integrado, sin embargo, el puente H presentó imperfecciones y un comportamiento inesperado (una hipótesis es que el 0 lógico presentaba una corriente mínima, y eso creó algún cortocircuito o imperfección en el puente H), por lo que el motor y maqueta no funcionaban con regularidad. En la figura \ref{fig:motor} se muestra el circuito puente H con el motor:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{images/motor.png}
+    \caption{Puente H con motor}
+    \label{fig:motor}
+\end{figure}
+
+Además, en la figura \ref{fig:luz} se muestra el circuito donde, con la contraseña obtenida exitosamente del sensor, se muestra el estado de cerrado (en el visualizador LEDs, donde la LED azul más a la derecha es el bit más significativo) de forma exitosa:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{images/luz.png}
+    \caption{Visualizador LED para cerrado}
+    \label{fig:luz}
+\end{figure}
+
+Por otro lado, en la figura \ref{fig:ejemplo} se muestra el circuito donde, con la contraseña obtenida exitosamente del sensor, se muestra el estado de abierto display de 7 segmentos de forma exitosa (Nota: ambas letras están encendidas para probar que ambos displays sirven y muestran lo mismo, por lo que al final, solo se usa uno):
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{images/ejemplo.png}
+    \caption{Display de 7 segmentos para mostrar una A de abierto}
+    \label{fig:ejemplo}
+\end{figure}
+
+Finalmente, se muestra el circuito completo en la figura \ref{fig:general}, donde se observa el caso de Error (previo) y actualmente leyendo del sensor. Es necesario aclarar que, al ser muchos casos, solo se muestran estas figuras, pues si se quisieran mostrar todos, tomaría mucho espacio. Así, se elige mostrar el resultado específico de motor, visualizador LEDs y display 7 segmentos, además de un resultado general.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{images/general.png}
+    \caption{Resultado general del circuito (error previo y actualmente leyendo del sensor)}
+    \label{fig:general}
 \end{figure}
 
 \section{Conclusiones}
-Las conclusiones se redactan en prosa, indicando los hallazgos más importantes, la efectividad del algoritmo y su aplicabilidad.
+
+Puede concluirse que el diseño e implementación de la puerta con contraseña de 8 bits demostró la aplicabilidad de la lógica combinacional y secuencial en sistemas de seguridad digital básicos. El uso de sensores digitales, registros de desplazamiento y decodificadores permitió capturar, visualizar y verificar correctamente la contraseña, mientras que el BCD a display de siete segmentos facilitó la representación visual del estado del sistema y el motor mostró su aplicación física. 
+
+Además, puede concluirse que es posible combinar compuertas TTL y CMOS si se realizan las prevenciones y conexiones necesarias, sin embargo, también se concluye que es más laborioso y sería más útil manejar el mismo voltaje para todo. Aún así, el circuito combinatorio implementado con compuertas TTL, junto con el multiplexor SN74LS157, permitió seleccionar y mostrar correctamente los diferentes estados (abierto, cerrado, error y lectura), demostrando la viabilidad de integrar distintos submódulos de forma funcional e integrarlos con compuertas CMOS (como el registro de desplazamiento) de forma satisfatoria. 
+
+El puente H con transistores 2N222 logró accionar la maqueta del motor, aunque presentó ciertas imperfecciones, por lo que se concluye la necesidad de un diseño más robusto para aplicaciones prácticas más complejas o con mayor corriente.
+
+En general, se concluye que el proyecto consolidó los conocimientos de diseño lógico, integración de circuitos combinacionales con algunos digitales, uso de TTL y CMOS, entre otros aspectos, sirviendo como base para futuros desarrollos más complejos y como fundamento teórico para los estudiantes.
 
 \section{Recomendaciones}
-Se escriben recomendaciones sobre posibles mejoras, aplicaciones futuras o precauciones a tener en cuenta.
+
+Basado en la implementación del sistema de puerta con contraseña, es posible realizar varias recomendaciones para implementaciones futuras o para escalar el circuito.
+
+Primeramente, se recomienda optimizar el diseño del puente H. Investigar como tratar con posibles corrientes inesperadas de forma que el circuito sea más robusto (se sugiere diodos de protección por ejemplo).
+
+Considerar el uso de registros de desplazamiento TTL en lugar de CMOS cuando sea posible, para garantizar compatibilidad de niveles lógicos a 5V y reducir la dependencia de buffers adicionales.
+
+Podría implementarse un filtro RC para manejar el filtrado del sensor SW-420 completamente con hardware. Si bien esto no afecta en nada a la lógica del circuito, podría mejorar el filtrado de los datos (mejorando las lecturas) y además brindar un mayor aprendizaje.
+
 
 \section*{Bibliografía}
 \bibliographystyle{IEEEtran}
-\bibliography{referencias} % archivo referencias.bib con formato BibTeX
+\bibliography{reference} % archivo referencias.bib con formato BibTeX
 
 \end{document}
