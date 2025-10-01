@@ -1,223 +1,305 @@
-% Bitacora_Proyecto.tex
-% Plantilla LaTeX para la bitácora de un proyecto (Conocimiento de Ingeniería) — 10%
-% Instrucciones: compilar con pdflatex o latexmk. Mantener el archivo en un repositorio git y hacer commits frecuentes.
 \documentclass[12pt,a4paper]{article}
+
+% Paquetes útiles
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
 \usepackage{geometry}
-\usepackage{hyperref}
 \usepackage{fancyhdr}
-\usepackage{booktabs}
+\usepackage{hyperref}
 \usepackage{longtable}
 \usepackage{array}
-\usepackage{amsmath,amssymb}
-\usepackage{listings}
 \usepackage{graphicx}
 \usepackage{datetime}
-\usepackage{xcolor}
-\geometry{margin=2.5cm}
 
-% Cabecera y pie
+% Márgenes
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+
+% Encabezado y pie de página
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{Bitácora — Conocimiento de Ingeniería}
-\rhead{\textbf{Proyecto:} Nombre del Proyecto}
-\cfoot{Página \thepage}
+\fancyhead[L]{Bitácora de Proyecto}
+\fancyhead[R]{\today}
+\fancyfoot[C]{\thepage}
 
-% Comandos útiles
-\newcommand{\entry}[4]{%
-  \subsection*{#1}
-  \textbf{Fecha:} #2 \\
-  \textbf{Participantes:} #3 \\
-  \textbf{Objetivos del día:} \\
-  #4 \\
-  \vspace{6pt}
+% Comandos para las entradas de la bitácora
+\newcommand{\entrada}[5]{
+\noindent
+\textbf{Fecha:} #1\\
+\textbf{Actividad:} #2\\
+\textbf{Objetivo:} #3\\
+\textbf{Resultados:} #4\\
+\textbf{Observaciones:} #5\\
+\bigskip
+\hrule
+\bigskip
 }
 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\usepackage{karnaugh-map} % mapas k
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{geometry}
+\geometry{margin=1in}
+
 \begin{document}
+    
+% Título
+\title{\textbf{Bitácora}\\
+Instituto Tecnológico de Costa Rica \\
+CE 1107 — Fundamentos de Arquitectura de Computadores\\
+Proyecto Individual \\ Lógica Combinacional: Puerta con contraseña\\}
+\author{Estudiantes:\\
+Esteban Campos Abarca\\
+Jafet Díaz Morales}
+\date{30 de septiembre de 2025} % Sin fecha
 
-\begin{titlepage}
-  \centering
-  {\scshape\LARGE Universidad / Instituto \par}
-  \vspace{1cm}
-  {\huge\bfseries Bitácora de Proyecto: Nombre del Proyecto \par}
-  \vspace{1.5cm}
-  {\Large \textit{Atributo evaluado:} Conocimiento de Ingeniería (10\%) \par}
-  \vfill
-  {\large Autor: Nombre del Estudiante \par}
-  {\large Curso: Nombre del Curso \par}
-  {\large Profesor: Nombre del Profesor \par}
-  \vspace{1cm}
-  {\large Fecha de inicio: \today \par}
-\end{titlepage}
+\maketitle
 
-\tableofcontents
-\newpage
+\section{Resumen}
 
-\section{Instrucciones de uso}
-Esta bitácora debe actualizarse periódicamente. Cada entrada debe corresponder a una fecha (o rango de fechas) e incluir:
-\begin{itemize}
-  \item Actividades realizadas y procedimientos implementados (paso a paso).
-  \item Tablas de datos experimentales o de diseño.
-  \item Ecuaciones booleanas, mapas de Karnaugh y simplificaciones (si aplica).
-  \item Herramientas de automatización y software utilizados (versiones y comandos relevantes).
-  \item Enlaces a commits relevantes en el repositorio git (hash corto y mensaje).
-\end{itemize}
+En este documento encontrará dos cosas: La primera es el proceso completo del diseño del circuito, lo que incluye esquemáticos y tablas de verdad, así como la reducción de las ecuaciones booleanas. La segunda es una bitácora que contiene las principales fechas y actividades correspondientes al proceso de diseño.
 
-\section{Resumen ejecutivo}
-Breve resumen del progreso del proyecto, hitos y estado actual.
+\section{Proceso de diseño}
 
-\section{Registro diario / por sesión}
-% --- Ejemplo de entrada ---
-\subsection*{Plantilla de entrada}
-\noindent\textbf{Fecha:} \underline{YYYY-MM-DD}\\
-\textbf{Participantes:} \underline{Nombre(s)}\\
-\textbf{Objetivos del día:} \\ 
-\textbf{Procedimiento y pasos realizados:} \\ 
 \begin{enumerate}
-  \item Paso 1: descripción detallada. Incluir comandos, parámetros y valores medidos.
-  \item Paso 2: ...
-\end{enumerate}
-\textbf{Resultados (tablas, gráficas):} \\ 
-\textbf{Ecuaciones y simplificaciones (si aplica):} 
-\begin{verbatim}
-  -- Aquí incluir ecuaciones booleanas o algebraicas
-\end{verbatim}
-\textbf{Problemas encontrados y cómo se resolvieron:} \\ 
-\textbf{Tareas para la próxima sesión:} \\ 
-\vspace{0.5cm}
 
-% --- Entrada de ejemplo rellena ---
-\subsection*{Ejemplo: Semana 1 - Diseño inicial}
-\textbf{Fecha:} 2025-09-01\\
-\textbf{Participantes:} Jafet Díaz Morales\\
-\textbf{Objetivos del día:} Definir requerimientos, seleccionar microcontrolador y elaborar diagrama inicial.
-
-\textbf{Procedimiento y pasos realizados:}
-\begin{enumerate}
-  \item Revisión de requisitos del curso y alcance del proyecto.
-  \item Selección de Raspberry Pi Pico W por disponibilidad y conectividad Wi-Fi.
-  \item Diseño preliminar del circuito en esquemático (ver Figura~\ref{fig:esquematico}).
+    \item Se tiene como entrada 8 bits en serie de un sensor.
+    \item La contraseña debe mostrarse con un visualizador de LEDs.
+    \item Se procesan en paralelo con un decodificador que abre puerta con una combinación diferente a cerrar puerta (y viceversa, una que cierre diferente a la que abre)
+    \item Debe mostrar un circuito combinatorio para que un BCD a display de siete segmentos muestre si se cierra o abre la puerta.
+    \item Debe haber un desacople para un accionador de una puerta.
+  
 \end{enumerate}
 
-\begin{figure}[h]
-  \centering
-  % \includegraphics[width=0.7\textwidth]{esquematico.png} % descomentar y agregar archivo
-  \caption{Esquemático preliminar (añadir archivo si aplica).}
-  \label{fig:esquematico}
+Por lo tanto, a continuación se explicará por partes cada item.
+
+\subsection{Entrada de 8 bits}
+
+Para manejar las entradas de 8 switches se utilizó un sensor SW-420. Este es un sensor de vibración con salida digital. El sensor al configurarse a una sensibilidad adecuada puede servir para identificar toques. Por lo tanto, se utilizó este sensor para poder capturar serialmente una contraseña de 8 bits (1 y 0 en lógica digital).
+
+Un problema enfrentado es que el sensor es muy sensible y genera mucho ruido. Para solucionar esto se utilizó la Raspberry Pi Pico W como debouncer, de forma tal que la raspberry tomara únicamente el primer 1 digital que el sensor detectara. Cabe aclarar que la raspberry únicamente funciona para limitar el ruido del sensor, no realiza ninguna lógica adicional, por lo tanto, los 8 datos se obtienen serialmente a través del sensor. La conexión de este sensor con la raspberry se muestra en la figura \ref{fig:led} donde se ve el esquemático general (Nota: algunos pines GP de la raspberry pi pico podrían no ser los mismos usados por como se acomodaron luego el resto de las conexiones, pero el principio es el mismo, son pines de salida).
+
+\subsection{Visualizador con LEDs}
+
+Otro submódulo requerido es el visualizador con LEDS, el cuál muestra la contraseña que se ingresó. Como la contraseña a mostrar es de 8 bits, se decidió mostrar la contraseña de forma paralela (con 8 LEDS) y serial (con un LED). La contraseña serial viene del la señal que captura el sensor (usando la raspberry para debounce). Por otro lado, la contraseña en paralelo si requiere de el registro de desplazamiento serie-paralelo (el cual forma parte del circuito combinatorio desarrollado a más detalle en la siguiente etapa). A grandes rasgos, la raspberry manda la señal serial del sensor, una señal de pulso de reloj y una señal de strobe/latch que sirve para guardar y mostrar los datos) al registro de desplazamiento CD4094. 
+
+Así, el registro realiza la conversión de 8 bits seriales a 8 bits en paralelo que son mostrados cada uno con un LED. De esta forma, el visualizador es meramente una forma de ver el proceso que realiza el registro de desplazamiento y por esa razón el visualizador con LEDs viene después del registro. Esta conexión puede verse en la figura \ref{fig:led}
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.75\textwidth]{images/led.png} % Ajusta al 50% del ancho del texto
+    \caption{Esquemático: Sensor - Registro serie a paralelo - Visualizador LEDs }
+    \label{fig:led}
 \end{figure}
 
-\textbf{Resultados (tabla de componentes):}
-\begin{center}
-\begin{tabular}{@{}llr@{}}
+\subsubsection{Registro de desplazamiento serie-paralelo}
+
+Para realizar este proceso de pasar 8 bits en serie a paralelo se utilizó un registro de desplazamiento (similar a lo hecho por \cite{micropython2025registro}). Este registro es crucial para que los datos seriales del sensor puedan ser mostrados por el visualizador con LEDs y procesados por el circuito combinatorio. El registro utilizado fue el CD4094 el cuál es CMOS. Idealmente se hubiera deseado un TTL para mantener todo el circuito en TTL y utilizar 5V para todo, sin embargo, se eligió el CMOS por dos razones. 
+
+\begin{enumerate}
+    \item Los pines de la raspberry soportan 3.3 V. Al utilizar la raspberry como debouncer del sensor se tiene que utilizar 3.3 V para el sensor, de forma tal que su salida digital es también de 3.3 V. Por lo tanto, los 8 bits seriales son de 3.3 V
+    \item No se consiguió comprar un registro de desplazamiento serie-paralelo que fuera TTL y que tuviera un latch (para poder guardar y fijar los datos)
+\end{enumerate}
+
+El diseño del circuito requiere que el registro mantenga por algún tiempo la contraseña de 8 bits que viene del sensor, por lo que un registro sin latch no sería útil, debido a que los datos se perderían y serían difíciles de registrar. Además, para usar la raspberry, es conveniente que sea a 3.3 V. Por lo tanto, se decidió utilizar esta compuerta.
+
+Debido a esto, la salida en paralelo es inicialmente a 3.3 V. Esta salida es generalmente aceptable para la entrada de una compuerta TTL. Por ejemplo, en las 74LSxx suele ser:
+
+\[
+V_{IH} \geq 2.0 \,\text{V} \quad \Rightarrow \quad \text{``1 lógico''}
+\]
+\[
+V_{IL} \leq 0.8 \,\text{V} \quad \Rightarrow \quad \text{``0 lógico''}
+\]
+
+Ahora bien, a pesar de que así serviría el circuito (por ser CMOS a TTL, si fuera al revés habrían problemas) para evitar errores en la lógica se utiliza un buffer 74LS241 con el fin de estabilizar la señal. El buffer al ser TTL va a recibir la señal del CMOS y va a estabilizarla a 5V, que es la norma en TTL. Esta conexión además requiere de resistencias $pull-down$ en las TTL de forma que si no se llega al VIH la salida sea establecida en 0 lógico. 
+
+
+\subsection{Decodificador para abierto y cerrado (8 bits a 1 bit)}
+
+El principal problema de diseño es como lograr que 8 bits transmitan los estados posibles. Para resolver esto, se diseñó un decodificador utilizando compuertas lógicas. La idea consiste en un circuito combinatorio que reciba los 8 bits $ABCD EFGH$ y devuelva un bit que sirva para indicar si el estado es Abierto o Cerrado. 
+
+\subsubsection{Tabla de Verdad}
+
+Por lo tanto, se puede representar el circuito deseado con la tabla de verdad \ref{tab:8in2out} dónde $S_1$ corresponde al bit de abierto y $S_2$ corresponde al bit de cerrado. Note que hay una única combinación que genera un $1$ para abierto, lo mismo para cerrado. Note además que la combinación es diferente y que cualquier otra combinación produce $00$ \\
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{cccccccc|cc} % <-- la barra | separa entradas y salidas
 \toprule
-Referencia & Componente & Cantidad \\
+\textbf{$A$} & \textbf{$B$} & \textbf{$C$} & \textbf{$D$} & 
+\textbf{$E$} & \textbf{$F$} & \textbf{$G$} & \textbf{$H$} & 
+\textbf{$S_1$} & \textbf{$S_2$} \\
 \midrule
-R1 & Resistor 10k & 2 \\
-C1 & Condensador 10uF & 1 \\
-U1 & Raspberry Pi Pico W & 1 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+
+1 & 1 & 0 & 0 & 0 & 1 & 1 & 0 & 1 & 0 \\
+
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+
+1 & 1 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 1 \\
+
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+
+1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 \\
 \bottomrule
-\end{tabular}
-\end{center}
+\end{tabular}%
+}
+\caption{Tabla de Verdad para decodificador de 8 bits a 2 salidas de 1 bit}
+\label{tab:8in2out}
+\end{table}
 
-\textbf{Ecuaciones booleanas y simplificación:}
-\begin{align*}
-  F(A,B,C) &= A B + \overline{A} C \\ 
-  \text{Mapa de Karnaugh: simplificar a } F &= B A + \overline{A}C \quad(\text{ejemplo}).
-\end{align*}
+\subsubsection{Ecuaciones booleanas}
 
-\textbf{Problemas encontrados y soluciones:} Lecturas del sensor ruidosas; se añadió un filtro RC (R=10k, C=100nF) y se promediaron lecturas.
+Note que según la tabla \ref{tab:8in2out}, hay dos casos donde solamente una de las salidas S es 1, en el resto las salidas S son 0. Por lo tanto, usando mintérminos resulta en la siguientes ecuaciones booleanas: 
 
-\textbf{Commits relevantes:}
+\begin{equation}
+S_1 = AB\overline{CDE}FG\overline{H}
+\end{equation}
+
+\begin{equation}
+S_2 = AB\overline{C}DEFG\overline{H}
+\end{equation}
+
+Note que para ambas ecuaciones, usando mintérminos salen directas, al ser un solo mintérmino para cada salida, no pueden simplificarse más.
+
+Así, usando compuertas AND se puede llegar al siguiente esquemático (con compuertas AND de 3 entradas pues el modelo del que se dispone es el 74LS11). Note que es posible reutilizar compuertas (la 1 y 2 en \ref{fig:S1} y \ref{fig:S2}) pues reciben exactamente las mismas entradas. Eso implica que este diseño utiliza 6 compuertas AND en total. 
+
+Para $S_1$ la figura \ref{fig:S1} y para $S_2$ la figura \ref{fig:S2} :
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.5\textwidth]{images/Abrir.png} % Ajusta al 50% del ancho del texto
+    \caption{Esquematico de S1}
+    \label{fig:S1}
+\end{figure}
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.5\textwidth]{images/cerrar.png} % Ajusta al 50% del ancho del texto
+    \caption{Esquemático de S2}
+    \label{fig:S2}
+\end{figure}
+
+\subsection{BCD a display de siete segmentos utilizando un multiplexor}
+
+Así, se nos presentan dos posibles estados: abierto y cerrado, ambos indicados mediante un bit alto (1). La diferenciación entre estos dos estados puede hacerse de muchas maneras.
+
+La seleccionada fue utilizando un multiplexor. El mux es un circuito combinatorio que escoge entre dos opciones dependiendo de la entrada selectora. El mux utilizado fue el SN74LS157 \cite{Sandorobotics_74LS157} , el cuál tiene un pinout como se muestra a continuación en la figura \ref{fig:74LS157}.
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.5\textwidth]{images/74LS157.png} % Ajusta al 50% del ancho del texto
+    \caption{Pinout del multiplexor SN74LS157 \cite{Sandorobotics_74LS157}}
+    \label{fig:74LS157}
+\end{figure}
+
+
+Note que el Mux tiene la capacidad de seleccionar justamente entre 2 entradas (A o B) según el bit selector SEL. Note además que se tiene un bit STR el cuál corresponde a la activación en bajo (o sea, si STR es 0, el Mux funciona normalmente, si STR es 1, el Mux muestra un 0 lógico en todas sus salidas de datos).
+
+Este diseño de mux es muy útil debido a que nos deja elegir entre dos opciones de 4 bits ($A_1,A_2,A_3,A_4$, lo mismo con B) pero además nos permite forzar una salida de $0000$ si se pone STR en alto.
+
+Tomando esto en cuenta, podemos enviar 3 posibles combinaciones de 4 bits solamente con 2 bits. Esto es conveniente porque el BCD necesita únicamente 4 bits para manejar el display de siete segmentos, por lo que con el mux es posible poner 3 distintos números. 
+
+Ahora bien, es necesario poner letras, no números. Esto se logra intercambiando los pines de conexión del display de siete segmentos \cite{XLITX_5621BS} siguiendo el pinout \ref{fig:7seg} de forma que una combinación que normalmente pondría un número ponga una letra (por ejemplo, si se intercambian los pines de G y D, es posible lograr que un 0000 (que normalmente muestra un 0 en el display) muestra una A, o si se cambia A y C, un 6 muestra una E).
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.5\textwidth]{images/display.png} % Ajusta al 50% del ancho del texto
+    \caption{Pinout del display 7 segmentos \cite{XLITX_5621BS}}
+    \label{fig:7seg}
+\end{figure}
+
+Así, para mostrar 3 distintas letras se utiliza en el BCD:
+
 \begin{itemize}
-  \item \texttt{e3a1b2c} - "Inicial: plantilla del proyecto y esquemático".
-  \item \texttt{f4d5e6a} - "Agregar tabla de componentes y ejemplo de bitácora".
+    \item $ A = 0000 $ (lo que sería un 0 normalmente)
+    \item $ C = 1110 $ (lo que sería un 14 normalmente)
+    \item $ E = 0110 $ (lo que sería un 6 normalmente)
 \end{itemize}
+
+Para combinaciones como la C fue necesario revisar el pinout y datasheet del BCD e identificar que combinación servía. Note en el datasheet \cite{TI_SN74LS47} que $1110$ activa la cantidad de LEDS necesarios, el resto es solo reacomodar los pines. Por otro lado, note que más adelante, se podría usar:
+
+\[ L = 1010 \]
+
+Pero esto no corresponde al avance necesario para este taller y requeriría de mas compuertas para manejar otra opción.
+
+De esta forma, teniendo las combinaciones que generan las letras deseadas, se puede usar el mux para mostrarlas.
+
+\begin{itemize}
+    \item Para mostrar A, se usa $S_1$ en STR, pues si en algún momento la clave de abierto se activa, mandará un 1, forzando un $0000$ en el mux y a su vez, mostrando la A.
+
+    \item Para mostrar E y C, se usa $S_2$ en SEL, pues si en algún momento la clave de cerrado se activa, mandará un 1 lo que activará la segunda opción (4 bits fijos de antemano) y si no se pone la clave, se mantendrá un 0, poniendo la primera opción (4 bits fijos de antemano para poner la E).
+    
+\end{itemize}
+
+Note que no hay conflictos, pues A y C no pueden existir a la vez (según la tabla de verdad). Así, el circuito decodificador está completo. A continuación se muestra un esquemático general del circuito \ref{fig:esq1}
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.75\textwidth]{images/esquematico.png} % Ajusta al 50% del ancho del texto
+    \caption{Esquemático del circuito completo}
+    \label{fig:esq1}
+\end{figure}
+
+\subsection{Circuito desacoplador y accionador}
+
+El circuito desacoplador consiste en un puente H hecho con transistores 2N222 siguiendo el ejemplo de \cite{makordoba2025circuitoH}. El accionador consiste en un motor a la salida del puente H que mueve una puerta que sirve de maqueta. 
+
+El puente H tiene 2 entradas que cambian la dirección del motor. Así, las entradas se conectan a S1 y S2, causando que si S1 = 1, el motor gira en una dirección y si S2 = 1, el motor gira en la dirección contraria. Observe en la tabla de verdad \ref{tab:8in2out} que S1 y S2 no pueden ser 1 a la vez, evitando así cualquier problema con el puente H.
+
+De esta forma, el circuito para la puerta con contraseña está completo. A continuación se muestra un esquemático general del circuito \ref{fig:esq}. La parte superior representa el sensor, registro de desplazamiento, y visualizador LEDS. La parte de en medio es el circuito combinatorio con el decodificador, donde sus salidas S1 y S2 activan el puente H y el mux (que a su vez activa el BCD a display 7 segmentos)
+
+\begin{figure}[h!] % h! = intenta colocar la figura exactamente aquí
+    \centering    
+    \includegraphics[width=0.5\textwidth]{images/esq.png} % Ajusta al 50% del ancho del texto
+    \caption{Esquemático general del circuito completo: Sensor - Registro serie a paralelo - Visualizador LEDs - Circuito Combinatorio - BCD a 7 segmentos - Desacople y Accionador}
+    \label{fig:esq}
+\end{figure}
+
 
 \newpage
-\section{Tablas de datos}
-Incluya aquí tablas largas usando \texttt{longtable} cuando sea necesario.
 
-\begin{longtable}{@{}lll@{}}
-\caption{Registro de mediciones (ejemplo)}\\
-\toprule
-Fecha & Parámetro & Valor \\
-\midrule
-\endfirsthead
-\toprule
-Fecha & Parámetro & Valor \\
-\midrule
-\endhead
-2025-09-01 & Voltaje VCC & 3.3 V \\
-2025-09-02 & Corriente pico & 120 mA \\
-\bottomrule
-\end{longtable}
-
-\section{Ecuaciones y diseño lógico}
-Usar secciones separadas para presentar la lógica booleana, tablas de verdad, mapas de Karnaugh y la simplificación final.
-
-\subsection*{Tabla de verdad (ejemplo)}
 \begin{center}
-\begin{tabular}{cccc}
-\toprule
-A & B & C & F \\
-\midrule
-0 & 0 & 0 & 0 \\
-0 & 0 & 1 & 1 \\
-0 & 1 & 0 & 0 \\
-0 & 1 & 1 & 1 \\
-1 & 0 & 0 & 0 \\
-1 & 0 & 1 & 0 \\
-1 & 1 & 0 & 1 \\
-1 & 1 & 1 & 1 \\
-\bottomrule
-\end{tabular}
+    {\LARGE \textbf{Bitácora de Proyecto}}\\
+    \vspace{0.2cm}
 \end{center}
 
-\section{Herramientas y automatización}
-Describa aquí las herramientas (hardware y software) y los comandos de automatización empleados. Incluya versiones y fragmentos de comandos.
-
-\subsection*{Ejemplo de herramientas}
-\begin{itemize}
-  \item Sistema operativo: Ubuntu 22.04 (o macOS 14)
-  \item IDE: Visual Studio Code v1.xx
-  \item Lenguaje / Framework: MicroPython / C++ (indicar versiones)
-  \item Herramientas de automatización: Make, CMake, scripts bash, GitHub Actions (añadir workflows si aplica).
-\end{itemize}
-
-\subsection*{Comandos útiles (ejemplo)}
-\begin{lstlisting}
-# Inicializar repositorio
-git init
-git add Bitacora_Proyecto.tex
-git commit -m "Bitácora: plantilla inicial"
-# Subir a remoto (ejemplo GitHub)
-git remote add origin git@github.com:usuario/repositorio.git
-git push -u origin main
-
-# Compilar PDF
-pdflatex Bitacora_Proyecto.tex
-# O con latexmk
-latexmk -pdf Bitacora_Proyecto.tex
-\end{lstlisting}
-
-\section{Historial de commits (muestra)}
-Aquí debe pegarse el historial de commits relevante (hash, fecha y mensaje). Ejemplo:
-\begin{verbatim}
-commit e3a1b2c 2025-09-01 "Inicial: plantilla del proyecto y esquemático"
-commit f4d5e6a 2025-09-02 "Agregar tabla de componentes y ejemplo de bitácora"
-\end{verbatim}
-
-\section{Anexos}
-Incluya diagramas, fotografías del montaje, esquemáticos y cualquier otro material complementario. Añadir referencias a archivos en el repositorio (ruta relativa).
-
 \bigskip
-\noindent\textbf{Notas finales:}
-\begin{itemize}
-  \item Mantenga commits regulares: al menos 1 commit por sesión de trabajo (se penalizarán pocas confirmaciones).
-  \item Use mensajes de commit claros y vinculantes con la entrada de la bitácora (ej.: "Bitácora: pruebas sensor DHT11 — 2025-09-03").
-  \item Entregue el PDF generado y el enlace al repositorio con todo el historial.
-\end{itemize}
+
+% --- Entradas de ejemplo ---
+\entrada{06-09-2025}{Diseño de conexiones BCD - Display siete segmentos}{Determinar como mostrar letras con el BCD (normalmente solo muestra del 0 al 9)}{Se determinó que reacomodar los pines del display siete segmentos es la forma de resolver el problema}{Se le consultó al profesor por mensaje privado en discord de la situación y se aclaró el lunes 8. Cabe aclarar que esta parte del circuito funcional se armó en protoboard ese mismo día.}
+
+\entrada{09-09-2025}{Diseño inicial del decodificador}{Generar un circuito combinatorio que diferenciara entre abierto y cerrado}{Se hizo un circuito que devolviera 1 para abierto y 0 para cerrado}{Este diseño inicial luego se cambió}
+
+\entrada{12-09-2025}{Diferenciar estados}{Lograr que el bit que devuelve el circuito combinatorio pueda ser usado para que el BCD sepa que letra poner}{Se determinó que un multiplexor era una opción ideal. El mux puede escoger entre dos opciones de bits según el bit de selección (SEL) y además tiene un bit de habilitación que fuerza las salidas a 0 (STR)}{El uso del mux se consultó con el profesor por mensaje privado en discord, quién avaló el uso del mux el mismo día por mensaje. Cabe aclarar que como se usa el mux para diferenciar entre 3 grupos de 4 bits se encuentra en el diseño de la sección previa \texttt{Propuesta de Diseño}}
+
+\entrada{14-09-2025}{Decodificador de 8 bits a 1 (diseño final)}{Generar un circuito combinatorio que diferenciara entre abierto, cerrado e incorrecto y que sea más escalable}{Se hizo un circuito que devolviera 1 para abierto y 1 para cerrado, usando contraseñas diferentes, cualquier otra combinación da 0. Se usa el mux para diferenciar cuál usar en el display}{Este mismo día se armó el circuito funcional en protoboard. Cabe aclarar que toda la explicación está en la sección previa}
+
+\entrada{19-09-2025}{Programar e implementar sensor}{Implementar el sensor para la entrada de 8 bits}{Se diseño la conexión sensor - raspberry - registro serie paralelo. Se armó el circuito en protoboard}{Este mismo día, ademásde armar el circuito funcional en protoboard, se programó la raspberry de forma que funcionara. Cabe aclarar que toda la explicación está en la sección previa y en las figuras.}
+
+\entrada{24-09-2025}{Implementar Motor}{Implementar el puente H para accionar un motor}{Se diseño la conexión del desacople usando puente H y el accionador (motor).}{Este mismo día se terminó el diseño, además de armar el circuito funcional en protoboard.  Cabe aclarar que toda la explicación está en la sección previa y en las figuras.}
+
+\entrada{30-09-2025}{Realizar bitácora y paper}{Generar un documento latex con la bitácora y el proceso de diseño}{Se realizó este documento}{Cabe aclarar que varias de las imágenes (sobre todo los esquemáticos) fueron realizados a lo largo de todos los días en los que se realizó el proceso de diseño y armado del circuito, así como la tabla de verdad, ecuaciones, datasheet, etc. De lo que se guarda registro sobretodo es de los armados de circuitos en protoboard}
+
+Nota: ver github en sección de referencias \cite{JafetDM2025_proyecto1}
+
+% Puedes agregar más entradas aquí
+%\entrada{fecha}{actividad}{objetivo}{resultado}{observaciones}
+
+\bibliographystyle{IEEEtran}  % Estilo IEEE
+\bibliography{reference}    % Nombre del archivo .bib sin extensión
 
 \end{document}
